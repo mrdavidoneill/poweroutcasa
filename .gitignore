@@ -1,0 +1,5 @@
+/env
+.env
+.cron
+.vscode
+*.pyc
