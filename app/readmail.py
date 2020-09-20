@@ -8,7 +8,7 @@ from datetime import datetime
 from .logger import logger
 
 ########## CHECK TIME DELAY ##########
-DELAY_MINS = 15
+DELAY_MINS = 12
 ######################################
 
 
