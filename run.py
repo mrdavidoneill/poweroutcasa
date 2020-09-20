@@ -1,6 +1,3 @@
-#!/home1/anyoneil/cronjobs/poweroutcasa/env/bin/python
-
-
 from app.readmail import EmailChecker
 from settings import SMTP_SERVER, FROM_PWD, FROM_ADDRESS, EXPECTED_FROM, EXPECTED_SUBJECT, TO_ADDRESS
 
