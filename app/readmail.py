@@ -3,13 +3,15 @@ import time
 import imaplib
 import email
 import time
+import pytz
 from email.mime.text import MIMEText
 from datetime import datetime
 from .logger import logger
 
-########## CHECK TIME DELAY ##########
+########## CONSTANTS ##########
 DELAY_MINS = 12
-######################################
+ROUTER_TIMEZONE = "Europe/Madrid"
+###############################
 
 
 class EmailChecker:
@@ -65,7 +67,12 @@ class EmailChecker:
                     email_subject = msg['subject']
                     email_from = msg['from']
                     date = msg['date']
-                    date = email.utils.parsedate(date)
+                    date_struct = email.utils.parsedate(date)
+                    date_time = datetime.fromtimestamp(
+                        time.mktime(date_struct))
+                    tz = pytz.timezone(ROUTER_TIMEZONE)
+                    datetime_utc = toUTC(date_time, tz=tz)
+                    timestamp = time.mktime(datetime_utc.timetuple())
 
                     if email_subject != expected_subject:
                         logger.debug('Ignoring...')
@@ -78,9 +85,9 @@ class EmailChecker:
 
                     logger.debug('From : ' + email_from)
                     logger.debug('Subject : ' + email_subject)
-                    logger.debug(datetime.fromtimestamp(time.mktime(date)))
+                    logger.debug(datetime_utc)
 
-                    mail.append(time.mktime(date))
+                    mail.append(timestamp)
 
             self.mark_delete_msg(i)
 
@@ -94,7 +101,7 @@ class EmailChecker:
         """ Return true if has received OK email in last 12 minutes """
         for date in self.get_unseen_router_mail(expected_from, expected_subject):
             delay_seconds = 60 * DELAY_MINS
-            now = time.time()
+            now = time.mktime(time.gmtime())
             logger.debug(
                 "Ok received {} minutes ago".format(s_to_min(now - date)))
             if (now - date) <= delay_seconds:
@@ -139,3 +146,8 @@ def s_to_min(s):
     """ Convert milliseconds to minutes
         Return float """
     return round(float(s / 60.0), 1)
+
+
+def toUTC(date, tz):
+    """ Return date in local timezone to UTC """
+    return tz.normalize(tz.localize(date)).astimezone(pytz.utc)
