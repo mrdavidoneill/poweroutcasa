@@ -1,4 +1,3 @@
-#
 #!/home1/anyoneil/cronjobs/poweroutcasa/env/bin/python
 
 
