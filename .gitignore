@@ -3,3 +3,4 @@
 .cron
 .vscode
 *.pyc
+*.log
