@@ -30,6 +30,8 @@ class EmailChecker:
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
+        logger.debug("Deleting sent messages...")
+        self.delete_sent_emails()
         logger.debug("Expunging...")
         self.mailbox.expunge()
         logger.debug("Closing...")
@@ -49,6 +51,15 @@ class EmailChecker:
         except Exception, e:
             logger.critical(str(e))
             return False
+
+    def delete_sent_emails(self):
+        """ Delete all emails from sent folder """
+        self.mailbox.select("[Gmail]/Sent Mail")
+        typ, data = self.mailbox.search(None, "ALL")
+        mail_ids = data[0]
+        id_list = mail_ids.split()
+        for i in id_list:
+            self.mark_delete_msg(i)
 
     def get_unseen_router_mail(self, expected_from, expected_subject):
         """ Retrieves mail from mailbox """
