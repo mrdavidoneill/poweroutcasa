@@ -1,5 +1,6 @@
 import logging
 import logging.handlers
+import time
 
 ######### DEBUG LEVELS ##########
 CONSOLE_LEVEL = logging.DEBUG
@@ -11,6 +12,7 @@ logger.setLevel(logging.DEBUG)
 
 formatter = logging.Formatter(
     '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+formatter.converter = time.gmtime
 
 # Log to console
 ch = logging.StreamHandler()
