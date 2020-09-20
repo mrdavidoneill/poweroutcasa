@@ -99,8 +99,9 @@ class EmailChecker:
                     logger.debug(datetime_utc)
 
                     mail.append(timestamp)
-
-            self.mark_delete_msg(i)
+            if is_old(timestamp):
+                logger.debug("Deleting inbox message...")
+                self.mark_delete_msg(i)
 
         return mail
 
@@ -162,3 +163,9 @@ def s_to_min(s):
 def toUTC(date, tz):
     """ Return date in local timezone to UTC """
     return tz.normalize(tz.localize(date)).astimezone(pytz.utc)
+
+
+def is_old(timestamp, limit=DELAY_MINS):
+    """ Return true if timestamp is older than limit """
+    now = time.mktime(time.gmtime())
+    return (now - timestamp) > DELAY_MINS * 60
